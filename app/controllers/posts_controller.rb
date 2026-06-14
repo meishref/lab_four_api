@@ -1,10 +1,9 @@
 class PostsController < ApplicationController
-  before_action :set_post, only: %i[ show update destroy ]
+  before_action :set_post, only: %i[show update destroy]
 
   # GET /posts
   def index
     @posts = Post.all
-
     render json: @posts
   end
 
@@ -20,7 +19,8 @@ class PostsController < ApplicationController
     if @post.save
       render json: @post, status: :created, location: @post
     else
-      render json: @post.errors, status: :unprocessable_content
+      p @post.errors.full_messages
+      render json: @post.errors, status: :unprocessable_entity
     end
   end
 
@@ -29,7 +29,8 @@ class PostsController < ApplicationController
     if @post.update(post_params)
       render json: @post
     else
-      render json: @post.errors, status: :unprocessable_content
+      p @post.errors.full_messages
+      render json: @post.errors, status: :unprocessable_entity
     end
   end
 
@@ -39,13 +40,12 @@ class PostsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_post
-      @post = Post.find(params.expect(:id))
-    end
 
-    # Only allow a list of trusted parameters through.
-    def post_params
-      params.expect(post: [ :title, :content, :creator_id ])
-    end
+  def set_post
+    @post = Post.find(params.expect(:id))
+  end
+
+  def post_params
+    params.expect(post: [:title, :content, :creator_id])
+  end
 end
